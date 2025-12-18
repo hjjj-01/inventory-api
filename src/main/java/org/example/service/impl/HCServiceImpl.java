@@ -36,5 +36,24 @@ public class HCServiceImpl implements HCService {
         int result = hcRepository.deleteAll();
         return result > 0;
     }
+    public boolean commitInventory(Sku sku) {
+        int result = hcRepository.commitInventory(sku);
+        return result > 0;
+    }
+    public List<Sku> checkInventory(Sku sku) {
+        return hcRepository.checkInventory(sku);
+    }
+    public boolean InventoryChangeName(Long logsId,String preName){
+        int AffectRows = hcRepository.InventoryChangeName(logsId, preName);
+        return AffectRows>0;
+    }
+    public boolean InventoryChangeNumber(Long logsId,String preNumber){
+        int AffectRows = hcRepository.InventoryChangeNumber(logsId, preNumber);
+        return AffectRows>0;
+    }
+    public boolean InventoryDelete(List<Sku> skulist){
+        int AffectRows = hcRepository.InventoryDelete(skulist);
+        return AffectRows>0;
+    }
 
 }
