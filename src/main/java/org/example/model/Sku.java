@@ -13,9 +13,21 @@ public class Sku {
     private String operator;
     private String remark;
     private String dateTime;
+    private String backTime;
     private String boxNo;
     private String mantissa;
     private String complete;
+    private String pdaNo;
+    private String action;
+
+    private Long bag2232;
+    private Long bag2838;
+    private Long bag3443;
+    private Long bag3545;
+    private Long bag3525;
+    private Long bag3038;
+    private Long bag4565;
+    private Long bagBig;
 
     public void setLogs_id(Long logs_id) {
         this.logs_id = logs_id;
@@ -115,4 +127,73 @@ public class Sku {
     public void setComplete(String complete) {
         this.complete = complete;
     }
+    public void setPdaNo(String pdaNo) {
+        this.pdaNo = pdaNo;
+    }
+    public String getPdaNo() {
+        return pdaNo;
+    }
+    public void setAction(String action) {
+        this.action = action;
+    }
+    public String getAction() {
+        return action;
+    }
+    public void setBackTime(String backTime) {
+        this.backTime = backTime;
+    }
+    public String getBackTime() {
+        return backTime;
+    }
+
+//    袋子规格
+    public void setBag2232(Long bag2232) {
+        this.bag2232 = bag2232;
+    }
+    public Long getBag2232() {
+        return bag2232;
+    }
+    public Long getBag2838() {
+        return bag2838;
+    }
+    public void setBag2838(Long bag2838) {
+        this.bag2838 = bag2838;
+    }
+    public void setBag3038(Long bag3038) {
+        this.bag3038 = bag3038;
+    }
+    public Long getBag3038() {
+        return bag3038;
+    }
+    public void setBag3443(Long bag3443) {
+        this.bag3443 = bag3443;
+    }
+    public Long getBag3443() {
+        return bag3443;
+    }
+    public void setBag3525(Long bag3525) {
+        this.bag3525 = bag3525;
+    }
+    public Long getBag3525() {
+        return bag3525;
+    }
+    public Long getBag3545() {
+        return bag3545;
+    }
+    public Long getBag4565() {
+        return bag4565;
+    }
+    public void setBag3545(Long bag3545) {
+        this.bag3545 = bag3545;
+    }
+    public Long getBagBig() {
+        return bagBig;
+    }
+    public void setBag4565(Long bag4565) {
+        this.bag4565 = bag4565;
+    }
+    public void setBagBig(Long bagBig) {
+        this.bagBig = bagBig;
+    }
 }
+

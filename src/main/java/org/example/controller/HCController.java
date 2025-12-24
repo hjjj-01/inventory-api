@@ -267,7 +267,91 @@ public class HCController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
-
+    @PostMapping("/PdaCommit")
+    public ResponseEntity<?> PdaCommit(@RequestBody Sku sku) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            if (sku.getPdaNo() == null || sku.getAction() == null || sku.getOperator() == null) {
+                response.put("message", "后端接收不到数据");
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } else {
+                boolean result = hcService.pdaCommit(sku);
+                if (result) {
+                    response.put("message", "success");
+                    return new ResponseEntity<>(response, HttpStatus.OK);
+                } else {
+                    response.put("message", "fail");
+                    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                }
+            }
+        } catch (Exception e) {
+            response.put("message", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PostMapping("/pdaCheck")
+    public ResponseEntity<?> pdaCheck(@RequestBody Sku sku) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            if (sku == null) {
+                response.put("message", "后端接收不到数据");
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } else {
+                List<Sku> result = hcService.pdaCheck(sku);
+                if (result != null && result.size() > 0) {
+                    response.put("message", "success");
+                    response.put("data",result);
+                    return new ResponseEntity<>(response, HttpStatus.OK);
+                } else {
+                    response.put("message", "fail");
+                    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                }
+            }
+        } catch (Exception e) {
+            response.put("message", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PostMapping("/BagCommit")
+    public ResponseEntity<?> bagcommit(@RequestBody Sku sku){
+        Map<String,Object> response = new HashMap<>();
+        try{
+            boolean result = hcService.HcBagCommit(sku);
+            if (result) {
+                response.put("message","success");
+                return new ResponseEntity<>(response,HttpStatus.OK);
+            }else{
+                response.put("message","fail");
+                return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+            }
+        }catch (Exception e){
+            response.put("message",e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PostMapping("/bagCheck")
+    public ResponseEntity<?> bagCheck(@RequestBody Sku sku) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            if (sku == null) {
+                response.put("message", "后端接收不到数据");
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            } else {
+                List<Sku> result = hcService.bagCheck(sku);
+                if (result != null && result.size() > 0) {
+                    response.put("message", "success");
+                    response.put("data",result);
+                    return new ResponseEntity<>(response, HttpStatus.OK);
+                } else {
+                    response.put("message", "查询不到记录");
+                    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                }
+            }
+        } catch (Exception e) {
+            response.put("message", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
 
 
 

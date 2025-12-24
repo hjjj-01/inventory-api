@@ -55,5 +55,22 @@ public class HCServiceImpl implements HCService {
         int AffectRows = hcRepository.InventoryDelete(skulist);
         return AffectRows>0;
     }
+    public boolean pdaCommit(Sku sku) {
+        int result = hcRepository.pdaCommit(sku);
+        return result > 0;
+    }
+    public List<Sku> pdaCheck(Sku sku) {
+        return hcRepository.pdaCheck(sku);
+    }
+    public List<Sku> getUnreturnedToday() {
+        return hcRepository.getUnreturnedToday();
+    }
+    public boolean HcBagCommit(Sku sku){
+        int result = hcRepository.HcBagCommit(sku);
+        return result>0;
+    }
+    public List<Sku> bagCheck(Sku sku) {
+        return hcRepository.bagCheck(sku);
+    }
 
 }

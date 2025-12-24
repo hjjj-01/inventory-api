@@ -11,6 +11,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.CallableStatement;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -171,7 +172,165 @@ public class HCRepository {
             return 0;
         }
     }
+    public int pdaCommit(Sku sku) {
+        String selectSql =
+                "select 1 from hc_pda_table " +
+                        "where pdaNo = ? " +
+                        "and DATE(dateTime) = DATE(?)";
 
+        String insertSql =
+                "insert into hc_pda_table (`operator`, pdaNo, action, dateTime, complete) " +
+                        "values (?,?,?,?,?)";
+
+        String updateSql =
+                "update hc_pda_table " +
+                        "set backTime = ? " +
+                        ",action = '放回',remark = ? " +
+                        "where pdaNo = ? " +
+                        "and action = '取走' " +
+                        "and DATE(dateTime) = DATE(?) " +
+                        "and backTime IS NULL";
+
+
+
+        try {
+            // 只检查“同一天是否已存在”
+            List<Integer> existingRecords = jdbcTemplate.query(
+                    selectSql,
+                    new Object[]{
+                            sku.getPdaNo(),
+                            sku.getDateTime()
+                    },
+                    (rs, rowNum) -> rs.getInt(1)
+            );
+
+            // 根据 action 执行逻辑
+            if ("取走".equals(sku.getAction())) {
+                if (!existingRecords.isEmpty()) {
+                    throw new RuntimeException("同一天已存在相同记录");
+                }
+                return jdbcTemplate.update(
+                        insertSql,
+                        sku.getOperator(),
+                        sku.getPdaNo(),
+                        sku.getAction(),
+                        sku.getDateTime(),
+                        sku.getComplete()
+                );
+            }
+            LocalDateTime now = LocalDateTime.now();
+            if ("放回".equals(sku.getAction())) {
+                return jdbcTemplate.update(
+                        updateSql,
+                        sku.getDateTime(),     // backTime
+                        sku.getOperator(),
+                        sku.getPdaNo(),
+                        now
+                );
+            }
+
+            throw new RuntimeException("操作错误");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+    public List<Sku> pdaCheck(Sku sku){
+        StringBuilder selectsql = new StringBuilder("select * from hc_pda_table where 1=1");
+        List<Object> params = new ArrayList<>();
+        try{
+            if(sku.getAction()!=null && !sku.getAction().isEmpty()){
+                selectsql.append(" and action = ?");
+                params.add(sku.getAction());
+            }
+            selectsql.append(" ORDER BY dateTime DESC");
+
+            return jdbcTemplate.query(selectsql.toString(),
+                    (rs, rowNum) -> {
+                Sku sku1 = new Sku();
+                sku1.setOperator(rs.getString("operator"));
+                sku1.setRemark(rs.getString("remark"));
+                sku1.setPdaNo(rs.getString("pdaNo"));
+                sku1.setAction(rs.getString("action"));
+                sku1.setDateTime(rs.getString("dateTime"));
+                sku1.setBackTime(rs.getString("backTime"));
+                return sku1;
+            }, params.toArray());
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    public int HcBagCommit(Sku sku){
+        String sql = "insert into hc_bag_table(operator,bag2232,bag2838,bag3443,bag3545,bag3525,bag3038,bag4565,bagBig,dateTime)"+
+                "values (?,?,?,?,?,?,?,?,?,?)";
+        try{
+            return jdbcTemplate.update(sql,
+                        sku.getOperator(),
+                        sku.getBag2232(),
+                        sku.getBag2838(),
+                        sku.getBag3443(),
+                        sku.getBag3545(),
+                        sku.getBag3525(),
+                        sku.getBag3038(),
+                        sku.getBag4565(),
+                        sku.getBagBig(),
+                        sku.getDateTime());
+        }catch(Exception e){
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+//    发邮件查询
+    public List<Sku> getUnreturnedToday() {
+        String sql = "SELECT operator, pdaNo, dateTime FROM hc_pda_table " +
+                "WHERE action = '取走' AND backTime IS NULL AND DATE(dateTime) = CURDATE()";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Sku sku = new Sku();
+            sku.setOperator(rs.getString("operator"));
+            sku.setPdaNo(rs.getString("pdaNo"));
+            sku.setDateTime(rs.getString("dateTime"));
+            return sku;
+        });
+    }
+    public List<Sku> bagCheck(Sku sku){
+        StringBuilder selectsql = new StringBuilder("select * from hc_bag_view where 1=1");
+        List<Object> params = new ArrayList<>();
+        try{
+            if(sku.getDateTime()!=null && !sku.getDateTime().isEmpty()){
+                selectsql.append(" and dateTime between ? and ?");
+                params.add(sku.getDateTime());
+                params.add(sku.getBackTime());
+            }
+            selectsql.append(" ORDER BY dateTime DESC");
+
+            return jdbcTemplate.query(selectsql.toString(),
+                    (rs, rowNum) -> {
+                        Sku sku1 = new Sku();
+                        sku1.setOperator(rs.getString("operator"));
+                        sku1.setBag2232(rs.getLong("bag2232"));
+                        sku1.setBag2838(rs.getLong("bag2838"));
+                        sku1.setBag3443(rs.getLong("bag3443"));
+                        sku1.setBag3545(rs.getLong("bag3545"));
+                        sku1.setBag3525(rs.getLong("bag3525"));
+                        sku1.setBag3038(rs.getLong("bag3038"));
+                        sku1.setBag4565(rs.getLong("bag4565"));
+                        sku1.setBagBig(rs.getLong("bagBig"));
+                        sku1.setDateTime(rs.getString("dateTime"));
+                        return sku1;
+                    }, params.toArray());
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+
+    }
 
 
 }

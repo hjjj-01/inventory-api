@@ -16,5 +16,11 @@ public interface HCService {
     public boolean InventoryDelete(List<Sku> skulist);
     public boolean InventoryChangeName(Long logsId,String preName);
     public boolean InventoryChangeNumber(Long logsId,String preNumber);
+    public boolean pdaCommit(Sku sku);
+    public List<Sku> pdaCheck(Sku sku);
+    public List<Sku> getUnreturnedToday();
+    public boolean HcBagCommit(Sku sku);
+    public List<Sku> bagCheck(Sku sku);
+
 }
 
